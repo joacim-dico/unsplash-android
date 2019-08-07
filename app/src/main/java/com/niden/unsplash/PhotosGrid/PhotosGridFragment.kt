@@ -1,13 +1,11 @@
 package com.niden.unsplash.PhotosGrid
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.niden.unsplash.Network.PhotoApiModel
 import com.niden.unsplash.R
 
 class PhotosGridFragment: Fragment() {
@@ -15,11 +13,15 @@ class PhotosGridFragment: Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PhotosGridAdapter
     private lateinit var containerView: View
+    private lateinit var searchView: SearchView
 
     private lateinit var presenter: PhotosGridPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        // Initiate menu
+        setHasOptionsMenu(true)
 
         // Connect presenter
         presenter = PhotosGridPresenter(this)
@@ -35,10 +37,37 @@ class PhotosGridFragment: Fragment() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+
+        inflater?.inflate(R.menu.search, menu)
+        initiateSearch(menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun initiateSearch(menu: Menu?) {
+
+        val searchItem = menu?.let { it.findItem(R.id.action_search) }
+
+        searchView = searchItem?.actionView as SearchView
+        searchView.isSubmitButtonEnabled = true
+        searchView.queryHint = "Search.."
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if (query.isNotBlank()) {
+                    presenter.queryPhotos(query)
+                }
+                return true
+            }
+        })
+    }
+
     fun populateList(list: List<PhotoViewModel>) {
         viewAdapter.updateList(list)
-        recyclerView.adapter = viewAdapter
-
     }
 
 
