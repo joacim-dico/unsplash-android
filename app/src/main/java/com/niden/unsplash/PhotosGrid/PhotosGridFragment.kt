@@ -27,7 +27,7 @@ class PhotosGridFragment: Fragment() {
         // Create view
         containerView = inflater.inflate(R.layout.fragment_photos_grid, container, false)
         recyclerView = containerView.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(context, 3)
+        recyclerView.layoutManager = GridLayoutManager(context, 2)
         viewAdapter = PhotosGridAdapter()
         recyclerView.adapter = viewAdapter
 
@@ -35,7 +35,7 @@ class PhotosGridFragment: Fragment() {
 
     }
 
-    fun populateList(list: List<PhotoApiModel>) {
+    fun populateList(list: List<PhotoViewModel>) {
         viewAdapter.updateList(list)
         recyclerView.adapter = viewAdapter
 

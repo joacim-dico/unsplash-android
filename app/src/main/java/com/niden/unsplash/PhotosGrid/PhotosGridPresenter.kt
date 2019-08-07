@@ -17,8 +17,10 @@ class PhotosGridPresenter(val fragment: PhotosGridFragment) {
             }
 
             override fun onResponse(call: Call<List<PhotoApiModel>>, response: Response<List<PhotoApiModel>>) {
+
                 response.body()?.let {
-                    fragment.populateList(it)
+                    val viewModels = it.map { model -> PhotoViewModel(model) }
+                    fragment.populateList(viewModels)
                 }
             }
 
