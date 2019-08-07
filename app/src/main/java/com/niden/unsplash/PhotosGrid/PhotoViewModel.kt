@@ -1,21 +1,9 @@
 package com.niden.unsplash.PhotosGrid
 
-import android.net.Uri
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.niden.unsplash.Network.PhotoApiModel
+import com.niden.unsplash.Network.Urls
 
-@JsonClass(generateAdapter = true)
-class PhotoViewModel {
-
-    @Json(name = "id")
-    val id: String? = null
-
-    @Json(name = "urls")
-    val urls: Urls? = null
-}
-
-class Urls {
-    val regular: String? = null
-    val small: String? = null
-
+class PhotoViewModel(apiModel: PhotoApiModel) {
+    val id: String? = apiModel.id
+    val urls: Urls? = apiModel.urls
 }

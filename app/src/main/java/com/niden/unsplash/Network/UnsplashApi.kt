@@ -15,17 +15,15 @@ import retrofit2.http.Query
 private const val BASE_URL = "https://api.unsplash.com"
 private const val API_KEY = "Client-ID 3e7f0a7d42a3a4ce8fdc03272e73feef2fdba0440f365a37fb3edab2d74db603"
 
-private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
-    .build()
-
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create())
     .baseUrl(BASE_URL)
     .build()
 
 interface UnsplashApiService {
-    @Headers("Authorization: $API_KEY; Accept-Version: v1")
+    @Headers(
+        "Authorization: $API_KEY",
+        "Accept-Version: v1")
     @GET("/photos")
     fun getPhotos(): Call<List<PhotoApiModel>>
 }
