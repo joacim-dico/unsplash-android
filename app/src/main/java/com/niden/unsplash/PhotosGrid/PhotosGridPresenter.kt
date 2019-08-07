@@ -14,40 +14,34 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
         getPhotos()
     }
 
-    private fun getPhotos() = parse(UnsplashApi.retrofitService.getPhotos())
+    fun getPhotos(){
+        val data = UnsplashApi.retrofitService.getPhotos()
+        enqueue(data) { list -> list?.let { populate(it) }}
+    }
 
     fun queryPhotos(query: String) {
         val data = UnsplashApi.retrofitService.queryPhotos(query)
-            data.enqueue(object : Callback<SearchResultModel> {
-            override fun onFailure(call: Call<SearchResultModel>, t: Throwable) {
-                Log.i("Parse error", "Parse failed")
+        enqueue(data) { result -> result?.results?.let { populate(it) }}
+    }
+
+    private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
+        data.enqueue(object : Callback<T> {
+            override fun onFailure(call: Call<T>, t: Throwable) {
+                error()
             }
 
-            override fun onResponse(call: Call<SearchResultModel>, response: Response<SearchResultModel>) {
-
-                response.body()?.let {
-                    val viewModels = it.results.map { model -> PhotoViewModel(model) }
-                    fragment.populateList(viewModels)
-                }
+            override fun onResponse(call: Call<T>, response: Response<T>) {
+                callback(response.body())
             }
-
         })
     }
 
-    private fun parse(data: Call<List<PhotoApiModel>>) {
-        data.enqueue(object : Callback<List<PhotoApiModel>> {
-            override fun onFailure(call: Call<List<PhotoApiModel>>, t: Throwable) {
-                Log.i("Parse error", "Parse failed")
-            }
+    private fun populate(list: List<PhotoApiModel>) {
+        val viewModels = list.map { model -> PhotoViewModel(model) }
+        fragment.populateList(viewModels)
+    }
 
-            override fun onResponse(call: Call<List<PhotoApiModel>>, response: Response<List<PhotoApiModel>>) {
-
-                response.body()?.let {
-                    val viewModels = it.map { model -> PhotoViewModel(model) }
-                    fragment.populateList(viewModels)
-                }
-            }
-
-        })
+    private fun error() {
+        Log.i("Parse error", "Parse failed")
     }
 }

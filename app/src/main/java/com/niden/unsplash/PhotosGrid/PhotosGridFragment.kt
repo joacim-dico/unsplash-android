@@ -60,10 +60,16 @@ class PhotosGridFragment: Fragment() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (query.isNotBlank()) {
                     presenter.queryPhotos(query)
+                    closeKeyboard()
                 }
                 return true
             }
         })
+    }
+
+    fun closeKeyboard() {
+        searchView.clearFocus()
+        searchView.focusable = View.NOT_FOCUSABLE
     }
 
     fun populateList(list: List<PhotoViewModel>) {
