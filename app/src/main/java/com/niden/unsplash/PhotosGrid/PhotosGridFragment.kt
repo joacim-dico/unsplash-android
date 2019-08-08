@@ -1,17 +1,17 @@
 package com.niden.unsplash.PhotosGrid
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.niden.unsplash.MainActivity
-import com.niden.unsplash.PhotoDetail.PhotoDetailFragment
 import com.niden.unsplash.R
+import kotlinx.android.synthetic.main.fragment_photos_grid.*
 
 class PhotosGridFragment: Fragment() {
 
@@ -22,14 +22,12 @@ class PhotosGridFragment: Fragment() {
 
     private lateinit var presenter: PhotosGridPresenter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         // Initiate menu
         setHasOptionsMenu(true)
-
-        // Connect presenter
-        presenter = PhotosGridPresenter(this)
 
         // Create view
         containerView = inflater.inflate(R.layout.fragment_photos_grid, container, false)
@@ -39,6 +37,11 @@ class PhotosGridFragment: Fragment() {
             openDetailView(it)
         })
         recyclerView.adapter = viewAdapter
+
+        initiateSearchResultButtons()
+
+        // Connect presenter
+        presenter = PhotosGridPresenter(this)
 
         return containerView
 
@@ -52,7 +55,6 @@ class PhotosGridFragment: Fragment() {
     }
 
     private fun openDetailView(photo: PhotoViewModel) {
-        // How do I open the detail view??
         (this.activity as MainActivity).pushDetailView(photo)
     }
 
@@ -71,12 +73,22 @@ class PhotosGridFragment: Fragment() {
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (query.isNotBlank()) {
-                    presenter.queryPhotos(query)
+                    presenter.queryPhotos(query, 1, 20)
                     closeKeyboard()
                 }
                 return true
             }
         })
+    }
+
+    private fun initiateSearchResultButtons() {
+        getButton(R.id.button_next).setOnClickListener {
+
+        }
+    }
+
+    private fun getButton(id: Int): Button {
+        return containerView.findViewById<Button>(id)
     }
 
     private fun closeKeyboard() {
@@ -86,6 +98,17 @@ class PhotosGridFragment: Fragment() {
 
     fun populateList(list: List<PhotoViewModel>) {
         viewAdapter.updateList(list)
+    }
+
+    fun showSearchResultHeader(show: Boolean) {
+        containerView
+            .findViewById<LinearLayout>(R.id.search_results_header)
+            ?.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    fun updateSearchResultHeaders(page: Int, totalResults: Int = 0, totalPages: Int) {
+        containerView.findViewById<TextView>(R.id.search_result_pagination).text = "Page: ${page}/${totalPages}"
+        containerView.findViewById<TextView>(R.id.search_results_title).text = "Results: ${totalResults}"
     }
 
 

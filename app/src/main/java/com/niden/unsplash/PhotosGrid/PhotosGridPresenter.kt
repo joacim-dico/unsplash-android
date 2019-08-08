@@ -14,13 +14,21 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
     }
 
     fun getPhotos(){
+        fragment.showSearchResultHeader(false)
         val data = UnsplashApi.retrofitService.getPhotos()
         enqueue(data) { list -> list?.let { populate(it) }}
+
     }
 
-    fun queryPhotos(query: String) {
-        val data = UnsplashApi.retrofitService.queryPhotos(query)
-        enqueue(data) { result -> result?.results?.let { populate(it) }}
+    fun queryPhotos(query: String, page: Int, perPage: Int = 10) {
+        fragment.showSearchResultHeader(true)
+        val data = UnsplashApi.retrofitService.queryPhotos(query, page, perPage)
+        enqueue(data) { result ->
+            result?.let {
+                populateSearchHeaders(page, it.total, it.totalPages)
+                populate(it.results)
+            }
+        }
     }
 
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
@@ -38,6 +46,16 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
     private fun populate(list: List<PhotoApiModel>) {
         val viewModels = list.map { model -> PhotoViewModel(model) }
         fragment.populateList(viewModels)
+    }
+
+    /**
+     * Populate the search headers, combines number of results and total pages to pagination
+     */
+    private fun populateSearchHeaders(page: Int = 1, results: Int, totalPages: Int) {
+        if (totalPages > 0) {
+            val pages = results / totalPages
+            fragment.updateSearchResultHeaders(page, results, totalPages)
+        }
     }
 
     private fun error() {

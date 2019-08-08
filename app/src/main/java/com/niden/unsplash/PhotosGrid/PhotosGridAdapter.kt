@@ -9,7 +9,9 @@ import com.niden.unsplash.inflate
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_photo.view.*
 
-// Adapter required for recycler view
+/**
+ Photos grid recyclerview Adapter
+ */
 class PhotosGridAdapter(val onClickListener: OnClickListener): RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
 
     var photos: List<PhotoViewModel> = emptyList()
