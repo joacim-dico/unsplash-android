@@ -2,7 +2,6 @@ package com.niden.unsplash.PhotosGrid
 
 import android.util.Log
 import com.niden.unsplash.Network.PhotoApiModel
-import com.niden.unsplash.Network.SearchResultModel
 import com.niden.unsplash.Network.UnsplashApi
 import retrofit2.Call
 import retrofit2.Callback

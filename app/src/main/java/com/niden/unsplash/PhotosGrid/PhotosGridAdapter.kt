@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_photo.view.*
 
 // Adapter required for recycler view
-class PhotosGridAdapter: RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
+class PhotosGridAdapter(val onClickListener: OnClickListener): RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
 
     var photos: List<PhotoViewModel> = emptyList()
 
@@ -27,6 +27,14 @@ class PhotosGridAdapter: RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
         val itemPhoto = photos[position]
 
         holder.bindPhoto(itemPhoto)
+
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(itemPhoto)
+        }
+    }
+
+    class OnClickListener(val clickListener: (photo: PhotoViewModel) -> Unit) {
+        fun onClick(photo: PhotoViewModel) = clickListener(photo)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
