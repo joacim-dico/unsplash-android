@@ -9,6 +9,16 @@ import retrofit2.Response
 
 class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
 
+    /**
+     * Only used for searching, current page from Unsplash search result
+     */
+    var currentPage: Int = 0
+
+    /**
+     * Current query in search
+     */
+    var currentQuery: String = ""
+
     init {
         getPhotos()
     }
@@ -16,19 +26,36 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
     fun getPhotos(){
         fragment.showSearchResultHeader(false)
         val data = UnsplashApi.retrofitService.getPhotos()
-        enqueue(data) { list -> list?.let { populate(it) }}
+        enqueue(data) { list ->
+            list?.let { populate(it) }
+        }
 
     }
 
-    fun queryPhotos(query: String, page: Int, perPage: Int = 10) {
+    fun queryPhotos(query: String, page: Int, perPage: Int = 20) {
+
         fragment.showSearchResultHeader(true)
         val data = UnsplashApi.retrofitService.queryPhotos(query, page, perPage)
+
+        currentPage = page
+        currentQuery = query
+
         enqueue(data) { result ->
             result?.let {
                 populateSearchHeaders(page, it.total, it.totalPages)
                 populate(it.results)
             }
         }
+    }
+
+    fun paginateUp() {
+        currentPage++
+        queryPhotos(currentQuery, currentPage)
+    }
+
+    fun paginateDown() {
+        currentPage--
+        queryPhotos(currentQuery, currentPage--)
     }
 
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
@@ -51,9 +78,8 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
     /**
      * Populate the search headers, combines number of results and total pages to pagination
      */
-    private fun populateSearchHeaders(page: Int = 1, results: Int, totalPages: Int) {
+    private fun populateSearchHeaders(page: Int, results: Int, totalPages: Int) {
         if (totalPages > 0) {
-            val pages = results / totalPages
             fragment.updateSearchResultHeaders(page, results, totalPages)
         }
     }

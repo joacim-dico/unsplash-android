@@ -83,12 +83,17 @@ class PhotosGridFragment: Fragment() {
 
     private fun initiateSearchResultButtons() {
         getButton(R.id.button_next).setOnClickListener {
-
+            presenter.paginateUp()
         }
+
+        getButton(R.id.button_prev).setOnClickListener {
+            presenter.paginateDown()
+        }
+
     }
 
     private fun getButton(id: Int): Button {
-        return containerView.findViewById<Button>(id)
+        return containerView.findViewById(id)
     }
 
     private fun closeKeyboard() {
