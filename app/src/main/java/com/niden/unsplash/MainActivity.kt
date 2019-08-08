@@ -11,7 +11,6 @@ import com.niden.unsplash.PhotosGrid.PhotosGridFragment
 
 class MainActivity : AppCompatActivity(), FragNavController.RootFragmentListener {
 
-    private var currentFrag: Fragment? = null
     private val fragNavController: FragNavController = FragNavController(supportFragmentManager, R.id.contentContainer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity(), FragNavController.RootFragmentListener
     }
 
     override fun onBackPressed() {
-
         if(!fragNavController.popFragment()) {
             super.onBackPressed()
         }

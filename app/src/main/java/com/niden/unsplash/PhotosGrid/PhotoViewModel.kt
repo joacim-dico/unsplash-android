@@ -1,9 +1,11 @@
 package com.niden.unsplash.PhotosGrid
 
+import android.net.Uri
 import com.niden.unsplash.Network.PhotoApiModel
-import com.niden.unsplash.Network.Urls
+import com.niden.unsplash.toUri
 
 class PhotoViewModel(apiModel: PhotoApiModel) {
-    val id: String = apiModel.id
-    val urls: Urls = apiModel.urls
+    val description: String = apiModel.description
+    val urlSmall: Uri = apiModel.urls?.small.toUri()
+    val urlRegular: Uri = apiModel.urls?.regular.toUri()
 }

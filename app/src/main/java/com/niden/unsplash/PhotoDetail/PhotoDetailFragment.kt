@@ -10,6 +10,7 @@ import com.niden.unsplash.PhotosGrid.PhotoViewModel
 
 import com.niden.unsplash.R
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.row_photo.view.*
 
 /**
@@ -30,7 +31,8 @@ class PhotoDetailFragment(private val photo: PhotoViewModel) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val imageView = view.findViewById<ImageView>(R.id.imageDetailView)
-        Picasso.get().load(photo.urls.regular).into(imageView)
+        Picasso.get().load(photo.urlRegular).into(imageView)
+        textDetailView.text = photo.description
     }
 
 }
