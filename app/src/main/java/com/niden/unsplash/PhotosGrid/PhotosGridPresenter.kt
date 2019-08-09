@@ -1,13 +1,14 @@
 package com.niden.unsplash.PhotosGrid
 
 import android.util.Log
+import com.niden.unsplash.MainActivity
 import com.niden.unsplash.Network.PhotoApiModel
 import com.niden.unsplash.Network.UnsplashApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
+class PhotosGridPresenter(private val activity: MainActivity) {
 
     /**
      * Only used for searching, current page from Unsplash search result
@@ -23,7 +24,7 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
 
     init {
         currentViewState?.let {
-            fragment.updateView(it)
+            activity.updateView(it)
         } ?: run {
             getPhotos()
         }
@@ -43,7 +44,7 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
             )
 
             currentViewState = view
-            fragment.updateView(view)
+            activity.updateView(view)
         }
 
     }
@@ -68,7 +69,7 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
                 )
 
                 currentViewState = currentViewState
-                fragment.updateView(view)
+                activity.updateView(view)
             }
         }
     }
