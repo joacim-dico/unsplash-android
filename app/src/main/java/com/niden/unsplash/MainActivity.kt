@@ -11,7 +11,7 @@ import com.niden.unsplash.PhotosGrid.PhotosGridFragment
 
 class MainActivity : AppCompatActivity(), FragNavController.RootFragmentListener {
 
-    private val fragNavController: FragNavController = FragNavController(supportFragmentManager, R.id.contentContainer)
+    val fragNavController: FragNavController = FragNavController(supportFragmentManager, R.id.contentContainer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity(), FragNavController.RootFragmentListener
 
         // Set the root before initializing the state
         fragNavController.rootFragmentListener = this
-        fragNavController.initialize(FragNavController.TAB1, savedInstanceState)
 
+        fragNavController.initialize(FragNavController.TAB1, savedInstanceState)
     }
 
     override val numberOfRootFragments: Int = 1

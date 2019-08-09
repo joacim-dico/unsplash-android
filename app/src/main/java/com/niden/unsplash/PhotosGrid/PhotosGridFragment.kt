@@ -1,5 +1,6 @@
 package com.niden.unsplash.PhotosGrid
 
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.niden.unsplash.MainActivity
 import com.niden.unsplash.R
-import kotlinx.android.synthetic.main.fragment_photos_grid.*
 
 class PhotosGridFragment: Fragment() {
 
@@ -21,6 +21,10 @@ class PhotosGridFragment: Fragment() {
     private lateinit var searchView: SearchView
 
     private lateinit var presenter: PhotosGridPresenter
+
+    private val model: PhotosGridViewModel by lazy {
+        ViewModelProviders.of(this).get(PhotosGridViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -32,7 +36,9 @@ class PhotosGridFragment: Fragment() {
         // Create view
         containerView = inflater.inflate(R.layout.fragment_photos_grid, container, false)
         recyclerView = containerView.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(context, 2)
+
+        val layoutManager = GridLayoutManager(context, 2)
+        recyclerView.layoutManager = layoutManager
         viewAdapter = PhotosGridAdapter(PhotosGridAdapter.OnClickListener {
             openDetailView(it)
         })
@@ -52,6 +58,15 @@ class PhotosGridFragment: Fragment() {
         inflater?.inflate(R.menu.search, menu)
         initiateSearch(menu)
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 
     private fun openDetailView(photo: PhotoViewModel) {
@@ -101,20 +116,26 @@ class PhotosGridFragment: Fragment() {
         searchView.focusable = View.NOT_FOCUSABLE
     }
 
-    fun populateList(list: List<PhotoViewModel>) {
-        viewAdapter.updateList(list)
-    }
+    fun updateView(model: PhotosGridViewModel) {
 
-    fun showSearchResultHeader(show: Boolean) {
+        val page = model.currentPage
+        val totalPages = model.totalPages
+        val totalResults = model.results
+        val query = model.currentQuery
+
+        // Only show search header if query exists
         containerView
             .findViewById<LinearLayout>(R.id.search_results_header)
-            ?.visibility = if (show) View.VISIBLE else View.GONE
-    }
+            ?.visibility = if (query != "") View.VISIBLE else View.GONE
 
-    fun updateSearchResultHeaders(page: Int, totalResults: Int = 0, totalPages: Int) {
+
+        model.photos?.let {
+            viewAdapter.updateList(it)
+        }
+
         containerView.findViewById<TextView>(R.id.search_result_pagination).text = "Page: ${page}/${totalPages}"
         containerView.findViewById<TextView>(R.id.search_results_title).text = "Results: ${totalResults}"
-    }
 
+    }
 
 }

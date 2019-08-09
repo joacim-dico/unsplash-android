@@ -19,22 +19,37 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
      */
     var currentQuery: String = ""
 
+    var currentViewState: PhotosGridViewModel? = null
+
     init {
-        getPhotos()
+        currentViewState?.let {
+            fragment.updateView(it)
+        } ?: run {
+            getPhotos()
+        }
     }
 
     fun getPhotos(){
-        fragment.showSearchResultHeader(false)
         val data = UnsplashApi.retrofitService.getPhotos()
-        enqueue(data) { list ->
-            list?.let { populate(it) }
+        enqueue(data) {
+
+            val list = it?.map { model -> PhotoViewModel(model) }
+
+            val view = PhotosGridViewModel(0,
+                0,
+                0,
+                "",
+                list
+            )
+
+            currentViewState = view
+            fragment.updateView(view)
         }
 
     }
 
     fun queryPhotos(query: String, page: Int, perPage: Int = 20) {
 
-        fragment.showSearchResultHeader(true)
         val data = UnsplashApi.retrofitService.queryPhotos(query, page, perPage)
 
         currentPage = page
@@ -42,8 +57,18 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
 
         enqueue(data) { result ->
             result?.let {
-                populateSearchHeaders(page, it.total, it.totalPages)
-                populate(it.results)
+
+                val list = it.results.map { model -> PhotoViewModel(model) }
+
+                val view = PhotosGridViewModel(currentPage,
+                    it.total,
+                    it.totalPages,
+                    currentQuery,
+                    list
+                )
+
+                currentViewState = currentViewState
+                fragment.updateView(view)
             }
         }
     }
@@ -55,7 +80,7 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
 
     fun paginateDown() {
         currentPage--
-        queryPhotos(currentQuery, currentPage--)
+        queryPhotos(currentQuery, currentPage)
     }
 
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
@@ -70,21 +95,11 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
         })
     }
 
-    private fun populate(list: List<PhotoApiModel>) {
-        val viewModels = list.map { model -> PhotoViewModel(model) }
-        fragment.populateList(viewModels)
-    }
-
-    /**
-     * Populate the search headers, combines number of results and total pages to pagination
-     */
-    private fun populateSearchHeaders(page: Int, results: Int, totalPages: Int) {
-        if (totalPages > 0) {
-            fragment.updateSearchResultHeaders(page, results, totalPages)
-        }
-    }
-
     private fun error() {
         Log.i("Parse error", "Parse failed")
+    }
+
+    private fun saveState(view: PhotosGridViewModel) {
+
     }
 }

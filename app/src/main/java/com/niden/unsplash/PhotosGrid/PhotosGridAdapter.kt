@@ -39,7 +39,7 @@ class PhotosGridAdapter(val onClickListener: OnClickListener): RecyclerView.Adap
         fun onClick(photo: PhotoViewModel) = clickListener(photo)
     }
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bindPhoto(photo: PhotoViewModel) {
             Picasso.get().load(photo.urlSmall).into(view.itemImage)
