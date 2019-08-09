@@ -22,6 +22,8 @@ class PhotosGridPresenter(private val activity: MainActivity) {
 
     var currentViewState: PhotosGridViewModel? = null
 
+    var totalPages: Int = 0
+
     init {
         currentViewState?.let {
             activity.updateView(it)
@@ -68,6 +70,8 @@ class PhotosGridPresenter(private val activity: MainActivity) {
                     list
                 )
 
+                totalPages = it.totalPages
+
                 currentViewState = currentViewState
                 activity.updateView(view)
             }
@@ -75,13 +79,17 @@ class PhotosGridPresenter(private val activity: MainActivity) {
     }
 
     fun paginateUp() {
-        currentPage++
-        queryPhotos(currentQuery, currentPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            queryPhotos(currentQuery, currentPage)
+        }
     }
 
     fun paginateDown() {
-        currentPage--
-        queryPhotos(currentQuery, currentPage)
+        if (currentPage > 1) {
+            currentPage--
+            queryPhotos(currentQuery, currentPage)
+        }
     }
 
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
