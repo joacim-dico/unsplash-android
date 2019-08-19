@@ -20,19 +20,16 @@ class PhotosGridPresenter(private val activity: MainActivity) {
      */
     var currentQuery: String = ""
 
-    var currentViewState: PhotosGridViewModel? = null
-
     var totalPages: Int = 0
 
     init {
-        currentViewState?.let {
-            activity.updateView(it)
-        } ?: run {
-            getPhotos()
-        }
+        getPhotos()
     }
 
-    fun getPhotos(){
+    /**
+     * Fetching all photos
+     */
+    private fun getPhotos(){
         val data = UnsplashApi.retrofitService.getPhotos()
         enqueue(data) {
 
@@ -44,13 +41,14 @@ class PhotosGridPresenter(private val activity: MainActivity) {
                 "",
                 list
             )
-
-            currentViewState = view
             activity.updateView(view)
         }
 
     }
 
+    /**
+     * Query photos (send a query to unsplash)
+     */
     fun queryPhotos(query: String, page: Int, perPage: Int = 20) {
 
         val data = UnsplashApi.retrofitService.queryPhotos(query, page, perPage)
@@ -71,8 +69,6 @@ class PhotosGridPresenter(private val activity: MainActivity) {
                 )
 
                 totalPages = it.totalPages
-
-                currentViewState = currentViewState
                 activity.updateView(view)
             }
         }
@@ -106,9 +102,5 @@ class PhotosGridPresenter(private val activity: MainActivity) {
 
     private fun error() {
         Log.i("Parse error", "Parse failed")
-    }
-
-    private fun saveState(view: PhotosGridViewModel) {
-
     }
 }
