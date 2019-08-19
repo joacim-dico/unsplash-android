@@ -1,13 +1,14 @@
 package com.niden.unsplash.PhotosGrid
 
 import android.util.Log
+import com.niden.unsplash.MainActivity
 import com.niden.unsplash.Network.PhotoApiModel
 import com.niden.unsplash.Network.UnsplashApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
+class PhotosGridPresenter(private val activity: MainActivity) {
 
     /**
      * Only used for searching, current page from Unsplash search result
@@ -19,17 +20,16 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
      */
     var currentQuery: String = ""
 
-    var currentViewState: PhotosGridViewModel? = null
+    var totalPages: Int = 0
 
     init {
-        currentViewState?.let {
-            fragment.updateView(it)
-        } ?: run {
-            getPhotos()
-        }
+        getPhotos()
     }
 
-    fun getPhotos(){
+    /**
+     * Fetching all photos
+     */
+    private fun getPhotos(){
         val data = UnsplashApi.retrofitService.getPhotos()
         enqueue(data) {
 
@@ -41,13 +41,14 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
                 "",
                 list
             )
-
-            currentViewState = view
-            fragment.updateView(view)
+            activity.updateView(view)
         }
 
     }
 
+    /**
+     * Query photos (send a query to unsplash)
+     */
     fun queryPhotos(query: String, page: Int, perPage: Int = 20) {
 
         val data = UnsplashApi.retrofitService.queryPhotos(query, page, perPage)
@@ -67,20 +68,24 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
                     list
                 )
 
-                currentViewState = currentViewState
-                fragment.updateView(view)
+                totalPages = it.totalPages
+                activity.updateView(view)
             }
         }
     }
 
     fun paginateUp() {
-        currentPage++
-        queryPhotos(currentQuery, currentPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            queryPhotos(currentQuery, currentPage)
+        }
     }
 
     fun paginateDown() {
-        currentPage--
-        queryPhotos(currentQuery, currentPage)
+        if (currentPage > 1) {
+            currentPage--
+            queryPhotos(currentQuery, currentPage)
+        }
     }
 
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
@@ -97,9 +102,5 @@ class PhotosGridPresenter(private val fragment: PhotosGridFragment) {
 
     private fun error() {
         Log.i("Parse error", "Parse failed")
-    }
-
-    private fun saveState(view: PhotosGridViewModel) {
-
     }
 }
