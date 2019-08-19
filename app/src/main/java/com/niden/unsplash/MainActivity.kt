@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             pushDetailView(it)
         })
         recyclerView.adapter = viewAdapter
+        recyclerView.addItemDecoration(RecyclerItemDecoration(2, 0))
 
         initiateSearchResultButtons()
 
@@ -52,17 +53,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-        super.onSaveInstanceState(outState, outPersistentState)
-
-    }
-
-    override fun onBackPressed() {
-
-    }
-
-    fun pushDetailView(photo: PhotoViewModel) {
+    private fun pushDetailView(photo: PhotoViewModel) {
         val intent = Intent(this, PhotoDetailActivity::class.java)
         intent.putExtra("photoUrl", photo.urlRegular.toString())
         intent.putExtra("photoDescription", photo.description)
