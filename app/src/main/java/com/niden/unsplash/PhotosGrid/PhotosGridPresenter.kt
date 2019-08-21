@@ -88,6 +88,8 @@ class PhotosGridPresenter(private val activity: MainActivity) {
         }
     }
 
+    // The enqueue function is built in in the Retrofit. You can use that directly on a Call object.
+    // In production this will probably be in an APIManager or similar.
     private fun <T> enqueue(data: Call<T>, callback: (T?) -> Unit) {
         data.enqueue(object : Callback<T> {
             override fun onFailure(call: Call<T>, t: Throwable) {
