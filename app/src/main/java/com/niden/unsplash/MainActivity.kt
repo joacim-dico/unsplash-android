@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         // Only show search header if query exists
         search_results_header?.visibility = if (query != "") View.VISIBLE else View.GONE
 
-        viewAdapter.updateList(model.photos)
+        viewAdapter.photos = model.photos
 
         search_result_pagination.text = "Page: ${page}/${totalPages}"
         search_results_title.text = "Results: ${totalResults}"

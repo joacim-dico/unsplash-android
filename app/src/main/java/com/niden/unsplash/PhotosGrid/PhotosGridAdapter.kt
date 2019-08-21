@@ -13,7 +13,12 @@ import kotlinx.android.synthetic.main.row_photo.view.*
  */
 class PhotosGridAdapter(val onClickListener: (PhotoViewModel) -> (Unit)): RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
 
-    var photos: ArrayList<PhotoViewModel> = arrayListOf()
+    var photos: List<PhotoViewModel> = listOf()
+    set(value) {
+        field = value
+        notifyDataSetChanged() // This is a very old method equivalent to .reloadData in iOS, kind of in efficient.
+        // notifyItemRangeChanged() is a better way to update things. Skip the Range in the method to only update one row.
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflatedView = parent.inflate(R.layout.row_photo, false)
@@ -38,11 +43,4 @@ class PhotosGridAdapter(val onClickListener: (PhotoViewModel) -> (Unit)): Recycl
             Picasso.get().load(photo.urlSmall).into(itemView.itemImage)
         }
     }
-
-    fun updateList(photos: List<PhotoViewModel>) {
-        this.photos = photos as ArrayList<PhotoViewModel>
-        notifyDataSetChanged()  // This is a very old method equivalent to .reloadData in iOS, kind of in efficient.
-        // notifyItemRangeChanged() is a better way to update things. Skip the Range in the method to only update one row.
-    }
-
 }
