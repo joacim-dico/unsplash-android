@@ -10,16 +10,29 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.niden.unsplash.PhotoDetail.PhotoDetailActivity
 import com.niden.unsplash.PhotosGrid.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     var viewState: PhotosGridViewModel? = null
-    
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: PhotosGridAdapter
+
+    private val viewAdapter: PhotosGridAdapter = PhotosGridAdapter(PhotosGridAdapter.OnClickListener {
+        pushDetailView(it)
+    })
+    /*
+    Gather all recycler view properties in a lazy var to make the code cleaner.
+    All the code in the lazy block will not be triggered unless it gets accessed at some point, hence the lazy annotation.
+    Therefore is the adapter assignment left out in the onCreate.
+     */
+    private val recyclerView by lazy {
+        val layoutManager = GridLayoutManager(applicationContext, 2)
+        recycler_view.layoutManager = layoutManager
+        recycler_view.addItemDecoration(RecyclerItemDecoration(2, 0))
+        recycler_view }
+
+
     private lateinit var searchView: SearchView
 
     private lateinit var presenter: PhotosGridPresenter
@@ -28,15 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        recyclerView = findViewById(R.id.recyclerView)
-
-        val layoutManager = GridLayoutManager(applicationContext, 2)
-        recyclerView.layoutManager = layoutManager
-        viewAdapter = PhotosGridAdapter(PhotosGridAdapter.OnClickListener {
-            pushDetailView(it)
-        })
         recyclerView.adapter = viewAdapter
-        recyclerView.addItemDecoration(RecyclerItemDecoration(2, 0))
 
         initiateSearchResultButtons()
 

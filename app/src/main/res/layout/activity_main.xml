@@ -46,7 +46,7 @@
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:id="@+id/recyclerView"
+            android:id="@+id/recycler_view"
             tools:listitem="@layout/row_photo"
             tools:itemCount="20" android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
