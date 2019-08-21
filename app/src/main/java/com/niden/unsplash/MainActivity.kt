@@ -13,9 +13,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewAdapter: PhotosGridAdapter = PhotosGridAdapter(PhotosGridAdapter.OnClickListener {
+    private val viewAdapter: PhotosGridAdapter = PhotosGridAdapter {
         pushDetailView(it)
-    })
+    }
     /*
     Gather all recycler view properties in a lazy var to make the code cleaner.
     All the code in the lazy block will not be triggered unless it gets accessed at some point, hence the lazy annotation.
