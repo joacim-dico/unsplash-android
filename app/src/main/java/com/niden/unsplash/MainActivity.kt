@@ -43,7 +43,13 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = viewAdapter
 
-        initiateSearchResultButtons()
+        button_next.setOnClickListener {
+            presenter.paginateUp()
+        }
+
+        button_prev.setOnClickListener {
+            presenter.paginateDown()
+        }
 
         // Connect presenter
         presenter = PhotosGridPresenter(this)
@@ -85,21 +91,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun initiateSearchResultButtons() {
-        getButton(R.id.button_next).setOnClickListener {
-            presenter.paginateUp()
-        }
-
-        getButton(R.id.button_prev).setOnClickListener {
-            presenter.paginateDown()
-        }
-
-    }
-
-    private fun getButton(id: Int): Button {
-        return findViewById(id)
-    }
-
     private fun closeKeyboard() {
         searchView.clearFocus()
         searchView.focusable = View.NOT_FOCUSABLE
@@ -113,16 +104,15 @@ class MainActivity : AppCompatActivity() {
         val query = model.currentQuery
 
         // Only show search header if query exists
-        findViewById<LinearLayout>(R.id.search_results_header)
-            ?.visibility = if (query != "") View.VISIBLE else View.GONE
+        search_results_header?.visibility = if (query != "") View.VISIBLE else View.GONE
 
 
         model.photos?.let {
             viewAdapter.updateList(it)
         }
 
-        findViewById<TextView>(R.id.search_result_pagination).text = "Page: ${page}/${totalPages}"
-        findViewById<TextView>(R.id.search_results_title).text = "Results: ${totalResults}"
+        search_result_pagination.text = "Page: ${page}/${totalPages}"
+        search_results_title.text = "Results: ${totalResults}"
 
     }
 
