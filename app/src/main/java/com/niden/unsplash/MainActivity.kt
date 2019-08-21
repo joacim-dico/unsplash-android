@@ -4,9 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,8 +12,6 @@ import com.niden.unsplash.PhotosGrid.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
-    var viewState: PhotosGridViewModel? = null
 
     private val viewAdapter: PhotosGridAdapter = PhotosGridAdapter(PhotosGridAdapter.OnClickListener {
         pushDetailView(it)
@@ -32,9 +27,9 @@ class MainActivity : AppCompatActivity() {
         recycler_view.addItemDecoration(RecyclerItemDecoration(2, 0))
         recycler_view }
 
-
+    // Usage of lateinit is kind of risky for both Android and iOS AFAIK.
+    // If possible make these regular nullable vars, the presenter needs to be lateinit though I think for now.
     private lateinit var searchView: SearchView
-
     private lateinit var presenter: PhotosGridPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +57,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pushDetailView(photo: PhotoViewModel) {
-        val intent = Intent(this, PhotoDetailActivity::class.java)
-        intent.putExtra("photoUrl", photo.urlRegular.toString())
-        intent.putExtra("photoDescription", photo.description)
-        startActivity(intent)
+        startActivity(Intent(this, PhotoDetailActivity::class.java).apply {
+            putExtra("photoUrl", photo.urlRegular.toString())
+            putExtra("photoDescription", photo.description)
+        })
     }
 
     private fun initiateSearch(menu: Menu?) {
 
-        val searchItem = menu?.let { it.findItem(R.id.action_search) }
+        val searchItem = menu?.findItem(R.id.action_search)
 
         searchView = searchItem?.actionView as SearchView
         searchView.isSubmitButtonEnabled = true
