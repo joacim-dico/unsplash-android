@@ -33,7 +33,7 @@ class PhotosGridPresenter(private val activity: MainActivity) {
         val data = UnsplashApi.retrofitService.getPhotos()
         enqueue(data) {
 
-            val list = it?.map { model -> PhotoViewModel(model) }
+            val list = it?.map { model -> PhotoViewModel(model) } ?: listOf()
 
             val view = PhotosGridViewModel(0,
                 0,
