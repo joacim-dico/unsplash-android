@@ -5,4 +5,4 @@ class PhotosGridViewModel(
     val results: Int = 0,
     val totalPages: Int = 0,
     var currentQuery: String = "",
-    var photos: List<PhotoViewModel>? = null)
+    var photos: List<PhotoViewModel> = listOf())

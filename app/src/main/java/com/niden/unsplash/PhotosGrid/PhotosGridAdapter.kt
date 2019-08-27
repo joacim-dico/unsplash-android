@@ -1,6 +1,5 @@
 package com.niden.unsplash.PhotosGrid
 
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,18 +11,21 @@ import kotlinx.android.synthetic.main.row_photo.view.*
 /**
  Photos grid recyclerview Adapter
  */
-class PhotosGridAdapter(val onClickListener: OnClickListener): RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
+class PhotosGridAdapter(val onClickListener: (PhotoViewModel) -> (Unit)): RecyclerView.Adapter<PhotosGridAdapter.ViewHolder>() {
 
-    var photos: List<PhotoViewModel> = emptyList()
+    var photos: List<PhotoViewModel> = listOf()
+    set(value) {
+        field = value
+        notifyDataSetChanged() // This is a very old method equivalent to .reloadData in iOS, kind of in efficient.
+        // notifyItemRangeChanged() is a better way to update things. Skip the Range in the method to only update one row.
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflatedView = parent.inflate(R.layout.row_photo, false)
         return ViewHolder(inflatedView)
     }
 
-    override fun getItemCount(): Int {
-       return photos.size
-    }
+    override fun getItemCount(): Int = photos.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val itemPhoto = photos[position]
@@ -31,24 +33,14 @@ class PhotosGridAdapter(val onClickListener: OnClickListener): RecyclerView.Adap
         holder.bindPhoto(itemPhoto)
 
         holder.itemView.setOnClickListener {
-            onClickListener.onClick(itemPhoto)
+            onClickListener(itemPhoto)
         }
     }
 
-    class OnClickListener(val clickListener: (photo: PhotoViewModel) -> Unit) {
-        fun onClick(photo: PhotoViewModel) = clickListener(photo)
-    }
-
-    class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bindPhoto(photo: PhotoViewModel) {
-            Picasso.get().load(photo.urlSmall).into(view.itemImage)
+            Picasso.get().load(photo.urlSmall).into(itemView.itemImage)
         }
     }
-
-    fun updateList(photos: List<PhotoViewModel>) {
-        this.photos = photos
-        notifyDataSetChanged()
-    }
-
 }

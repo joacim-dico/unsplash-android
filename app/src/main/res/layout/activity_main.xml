@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!-- Try to avoid having nested LinearLayout, it slows down the performance of the scene.
+ConstraintLayouts are preferred and use relative placements of sub views instead of one dimensional containers. Like Web -->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,11 +19,11 @@
                 android:text="Search results for"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/search_results_title"
-                app:layout_constraintEnd_toStartOf="@+id/recyclerView" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/recycler_view" app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="8dp" app:layout_constraintHorizontal_bias="0.0"
                 android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/recyclerView" android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_view" android:textSize="24sp"
                 android:layout_marginHorizontal="8dp"/>
         <LinearLayout
                 android:orientation="horizontal"
@@ -46,7 +47,7 @@
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:id="@+id/recyclerView"
+            android:id="@+id/recycler_view"
             tools:listitem="@layout/row_photo"
             tools:itemCount="20" android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
